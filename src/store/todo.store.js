@@ -5,7 +5,7 @@ const Filters = {
   Pending: "Pending",
 };
 const state = {
-  todos: [new Todo("Piedra del almda"), new Todo("Piedra del infinito")],
+  todos: [new Todo("Piedra del almda"), new Todo("Piedra del infinito"), new Todo("Piedra de la mente")],
   filter: Filters.All,
 };
 
@@ -17,6 +17,12 @@ const initStore = () => {
 const loadStore = () => {
   throw new Error("No implementado");
 };
+
+/**
+ * 
+ * @param {String} filter 
+ * @returns Un filtro de los Todos.
+ */
 const getTodos = (filter = Filters.All) => {
   switch (filter) {
     case Filters.All:
@@ -42,6 +48,10 @@ state.todos.push(new todo(description));
 
 };
 
+/**
+ * 
+ * @param {String} todoId 
+ */
 const toggleTodo = (todoId) => {
 state.todos = state.todos.map(todo => {
   if(todo.id === todoId) todo.done = !todo.done;
@@ -66,7 +76,10 @@ const deleteCompleted = (todoId) => {
   state.todos = state.todos.filter(todo => todo.done === true)
 };
 
-
+/**
+ * 
+ * @param {String } newFilter 
+ */
 const setFilter = (newFilter = Filters.All) => {
   state.filter =  newFilter;
 };
