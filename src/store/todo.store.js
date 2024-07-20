@@ -1,26 +1,38 @@
 import { Todo } from "../todos/models/todo.model";
-const Filters = {
+export const Filters = {
   All: "all",
   Completed: "Completed",
   Pending: "Pending",
 };
 const state = {
-  todos: [new Todo("Piedra del almda"), new Todo("Piedra del infinito"), new Todo("Piedra de la mente")],
+  todos: [
+    new Todo("Piedra del almda"),
+    new Todo("Piedra del infinito"),
+    new Todo("Piedra de la mente"),
+  ],
   filter: Filters.All,
 };
 
 const initStore = () => {
-  console.log(state);
-  console.log("Init store");
+  loadStore();
 };
 
 const loadStore = () => {
-  throw new Error("No implementado");
+  if (!localStorage.getItem("state")) return;
+  const { todos = [], filter = Filters.All } = JSON.parse(
+    localStorage.getItem("state")
+  );
+  state.todos = todos;
+  state.filter = filter;
+};
+
+const SaveLocal = () => {
+  localStorage.setItem("state", JSON.stringify(state));
 };
 
 /**
- * 
- * @param {String} filter 
+ *
+ * @param {String} filter
  * @returns Un filtro de los Todos.
  */
 const getTodos = (filter = Filters.All) => {
@@ -28,9 +40,9 @@ const getTodos = (filter = Filters.All) => {
     case Filters.All:
       return [...state.todos];
     case Filters.Completed:
-      return state.filter((todo) => todo.done === true);
+      return state.todos.filter((todo) => todo.done);
     case Filters.Pending:
-      return state.filter((todo) => todo.done === false);
+      return state.todos.filter((todo) => !todo.done);
     default:
       throw new Error(`Option ${filter} no válido`);
       break;
@@ -38,50 +50,52 @@ const getTodos = (filter = Filters.All) => {
 };
 
 /**
- * 
- * @param {String} description 
+ *
+ * @param {String} description
  */
 const addTodo = (description) => {
-if(!description) throw new Error('Se requiere la descripción');
+  if (!description) throw new Error("Se requiere la descripción");
 
-state.todos.push(new todo(description));
-
+  state.todos.push(new Todo(description));
+  SaveLocal();
 };
 
 /**
- * 
- * @param {String} todoId 
+ *
+ * @param {String} todoId
  */
 const toggleTodo = (todoId) => {
-state.todos = state.todos.map(todo => {
-  if(todo.id === todoId) todo.done = !todo.done;
-  return todo;
-})
-
+  state.todos = state.todos.map((todo) => {
+    if (todo.id === todoId) todo.done = !todo.done;
+    return todo;
+  });
+  SaveLocal();
 };
 /**
- * 
- * @param {String} todoId 
+ *
+ * @param {String} todoId
  */
 const deleteTodo = (todoId) => {
-state.todos = state.todos.filter(todo => todo.id !== todoId)
-
+  state.todos = state.todos.filter((todo) => todo.id !== todoId);
+  SaveLocal();
 };
 
 /**
- * 
- * @param {String} todoId 
+ *
+ * @param {String} todoId
  */
 const deleteCompleted = (todoId) => {
-  state.todos = state.todos.filter(todo => todo.done === true)
+  state.todos = state.todos.filter((todo) => todo.done === false);
+  SaveLocal();
 };
 
 /**
- * 
- * @param {String } newFilter 
+ *
+ * @param {String } newFilter
  */
 const setFilter = (newFilter = Filters.All) => {
-  state.filter =  newFilter;
+  state.filter = newFilter;
+  SaveLocal();
 };
 
 const getCurrentFilter = () => {
